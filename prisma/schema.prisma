@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  role          Role      @default(USER)
+  Student       Student?
+  Teacher       Teacher?
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Student {
+  id         String  @id @default(uuid())
+  name       String
+  class      String
+  enrollment String  @unique
+  userId     String? @unique
+  loans      Loan[]
+  user       User?   @relation(fields: [userId], references: [id])
+}
+
+model Book {
+  id       String @id @default(uuid())
+  title    String
+  author   String
+  genre    String
+  code     String @unique
+  quantity Int
+  loans    Loan[]
+}
+
+model Loan {
+  id         String    @id @default(uuid())
+  studentId  String?
+  teacherId  String?
+  bookId     String
+  loanDate   DateTime  @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  status     String
+  book       Book      @relation(fields: [bookId], references: [id])
+  student    Student?  @relation(fields: [studentId], references: [id])
+  teacher    Teacher?  @relation(fields: [teacherId], references: [id])
+}
+
+model Teacher {
+  id     String  @id @default(uuid())
+  name   String
+  userId String? @unique
+  loans  Loan[]
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
