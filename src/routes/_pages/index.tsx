@@ -17,9 +17,28 @@ export const Route = createFileRoute('/_pages/')({
 
 function Home() {
     
+    const { useSession } = authClient;
+    const {data,error} = useSession();
+    
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+    
+    if (!data) {
+        return (
+            <div>
+                <h2>Loading...</h2>
+                <Button asChild>
+                    <Link to="/sign-in">Login</Link>
+                </Button>
+            </div>
+        );
+    }
+    
     return (
         <div>
-            <h1>Index Route</h1>
+            <h2>Hello, {data.user.name}</h2>
+            <p>Welcome to the library app!</p>
         </div>
     );
 }
