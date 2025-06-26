@@ -8,130 +8,215 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { createServerRootRoute } from '@tanstack/react-start/server'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PagesImport } from './routes/_pages'
-import { Route as AuthedImport } from './routes/_authed'
-import { Route as PagesIndexImport } from './routes/_pages/index'
-import { Route as PagesAccountImport } from './routes/_pages/account'
-import { Route as AuthedBooksImport } from './routes/_authed/books'
-import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
-import { Route as AuthSignInImport } from './routes/_auth/sign-in'
-import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PagesRouteImport } from './routes/_pages'
+import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as PagesIndexRouteImport } from './routes/_pages/index'
+import { Route as PagesAccountRouteImport } from './routes/_pages/account'
+import { Route as AuthedBooksRouteImport } from './routes/_authed/books'
+import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/$'
 
-// Create/Update Routes
+const rootServerRouteImport = createServerRootRoute()
 
-const PagesRoute = PagesImport.update({
+const PagesRoute = PagesRouteImport.update({
   id: '/_pages',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedRoute = AuthedImport.update({
+const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PagesIndexRoute = PagesIndexImport.update({
+const PagesIndexRoute = PagesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PagesRoute,
 } as any)
-
-const PagesAccountRoute = PagesAccountImport.update({
+const PagesAccountRoute = PagesAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => PagesRoute,
 } as any)
-
-const AuthedBooksRoute = AuthedBooksImport.update({
+const AuthedBooksRoute = AuthedBooksRouteImport.update({
   id: '/books',
   path: '/books',
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const AuthSignUpRoute = AuthSignUpImport.update({
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/_auth/sign-up',
   path: '/sign-up',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthSignInRoute = AuthSignInImport.update({
+const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/_auth/sign-in',
   path: '/sign-in',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthResetPasswordRoute = AuthResetPasswordImport.update({
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/_auth/reset-password',
   path: '/reset-password',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootServerRouteImport,
 } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/books': typeof AuthedBooksRoute
+  '/account': typeof PagesAccountRoute
+  '/': typeof PagesIndexRoute
+}
+export interface FileRoutesByTo {
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/books': typeof AuthedBooksRoute
+  '/account': typeof PagesAccountRoute
+  '/': typeof PagesIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_authed': typeof AuthedRouteWithChildren
+  '/_pages': typeof PagesRouteWithChildren
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_auth/sign-in': typeof AuthSignInRoute
+  '/_auth/sign-up': typeof AuthSignUpRoute
+  '/_authed/books': typeof AuthedBooksRoute
+  '/_pages/account': typeof PagesAccountRoute
+  '/_pages/': typeof PagesIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
+    | '/books'
+    | '/account'
+    | '/'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/reset-password' | '/sign-in' | '/sign-up' | '/books' | '/account' | '/'
+  id:
+    | '__root__'
+    | '/_authed'
+    | '/_pages'
+    | '/_auth/reset-password'
+    | '/_auth/sign-in'
+    | '/_auth/sign-up'
+    | '/_authed/books'
+    | '/_pages/account'
+    | '/_pages/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AuthedRoute: typeof AuthedRouteWithChildren
+  PagesRoute: typeof PagesRouteWithChildren
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
+}
+export interface FileServerRoutesByFullPath {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesByTo {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesById {
+  __root__: typeof rootServerRouteImport
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRouteTypes {
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths: '/api/auth/$'
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to: '/api/auth/$'
+  id: '__root__' | '/api/auth/$'
+  fileServerRoutesById: FileServerRoutesById
+}
+export interface RootServerRouteChildren {
+  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authed': {
-      id: '/_authed'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthedImport
-      parentRoute: typeof rootRoute
-    }
     '/_pages': {
       id: '/_pages'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof PagesImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PagesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_auth/reset-password': {
-      id: '/_auth/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof AuthResetPasswordImport
-      parentRoute: typeof rootRoute
-    }
-    '/_auth/sign-in': {
-      id: '/_auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof AuthSignInImport
-      parentRoute: typeof rootRoute
-    }
-    '/_auth/sign-up': {
-      id: '/_auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof AuthSignUpImport
-      parentRoute: typeof rootRoute
-    }
-    '/_authed/books': {
-      id: '/_authed/books'
-      path: '/books'
-      fullPath: '/books'
-      preLoaderRoute: typeof AuthedBooksImport
-      parentRoute: typeof AuthedImport
-    }
-    '/_pages/account': {
-      id: '/_pages/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof PagesAccountImport
-      parentRoute: typeof PagesImport
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_pages/': {
       id: '/_pages/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof PagesIndexImport
-      parentRoute: typeof PagesImport
+      preLoaderRoute: typeof PagesIndexRouteImport
+      parentRoute: typeof PagesRoute
+    }
+    '/_pages/account': {
+      id: '/_pages/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof PagesAccountRouteImport
+      parentRoute: typeof PagesRoute
+    }
+    '/_authed/books': {
+      id: '/_authed/books'
+      path: '/books'
+      fullPath: '/books'
+      preLoaderRoute: typeof AuthedBooksRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_auth/sign-up': {
+      id: '/_auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-// Create and export the route tree
+declare module '@tanstack/react-start/server' {
+  interface ServerFileRoutesByPath {
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+  }
+}
 
 interface AuthedRouteChildren {
   AuthedBooksRoute: typeof AuthedBooksRoute
@@ -156,78 +241,6 @@ const PagesRouteChildren: PagesRouteChildren = {
 
 const PagesRouteWithChildren = PagesRoute._addFileChildren(PagesRouteChildren)
 
-export interface FileRoutesByFullPath {
-  '': typeof PagesRouteWithChildren
-  '/reset-password': typeof AuthResetPasswordRoute
-  '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
-  '/books': typeof AuthedBooksRoute
-  '/account': typeof PagesAccountRoute
-  '/': typeof PagesIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '': typeof AuthedRouteWithChildren
-  '/reset-password': typeof AuthResetPasswordRoute
-  '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
-  '/books': typeof AuthedBooksRoute
-  '/account': typeof PagesAccountRoute
-  '/': typeof PagesIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_authed': typeof AuthedRouteWithChildren
-  '/_pages': typeof PagesRouteWithChildren
-  '/_auth/reset-password': typeof AuthResetPasswordRoute
-  '/_auth/sign-in': typeof AuthSignInRoute
-  '/_auth/sign-up': typeof AuthSignUpRoute
-  '/_authed/books': typeof AuthedBooksRoute
-  '/_pages/account': typeof PagesAccountRoute
-  '/_pages/': typeof PagesIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/reset-password'
-    | '/sign-in'
-    | '/sign-up'
-    | '/books'
-    | '/account'
-    | '/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | ''
-    | '/reset-password'
-    | '/sign-in'
-    | '/sign-up'
-    | '/books'
-    | '/account'
-    | '/'
-  id:
-    | '__root__'
-    | '/_authed'
-    | '/_pages'
-    | '/_auth/reset-password'
-    | '/_auth/sign-in'
-    | '/_auth/sign-up'
-    | '/_authed/books'
-    | '/_pages/account'
-    | '/_pages/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AuthedRoute: typeof AuthedRouteWithChildren
-  PagesRoute: typeof PagesRouteWithChildren
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-  AuthSignInRoute: typeof AuthSignInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   PagesRoute: PagesRouteWithChildren,
@@ -235,58 +248,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_authed",
-        "/_pages",
-        "/_auth/reset-password",
-        "/_auth/sign-in",
-        "/_auth/sign-up"
-      ]
-    },
-    "/_authed": {
-      "filePath": "_authed.tsx",
-      "children": [
-        "/_authed/books"
-      ]
-    },
-    "/_pages": {
-      "filePath": "_pages.tsx",
-      "children": [
-        "/_pages/account",
-        "/_pages/"
-      ]
-    },
-    "/_auth/reset-password": {
-      "filePath": "_auth/reset-password.tsx"
-    },
-    "/_auth/sign-in": {
-      "filePath": "_auth/sign-in.tsx"
-    },
-    "/_auth/sign-up": {
-      "filePath": "_auth/sign-up.tsx"
-    },
-    "/_authed/books": {
-      "filePath": "_authed/books.tsx",
-      "parent": "/_authed"
-    },
-    "/_pages/account": {
-      "filePath": "_pages/account.tsx",
-      "parent": "/_pages"
-    },
-    "/_pages/": {
-      "filePath": "_pages/index.tsx",
-      "parent": "/_pages"
-    }
-  }
+const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
 }
-ROUTE_MANIFEST_END */
+export const serverRouteTree = rootServerRouteImport
+  ._addFileChildren(rootServerRouteChildren)
+  ._addFileTypes<FileServerRouteTypes>()

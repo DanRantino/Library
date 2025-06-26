@@ -1,33 +1,32 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import NavBar from "~/components/NavBar";
-import * as React from "react";
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import NavBar from '~/components/NavBar';
 
-export const Route = createFileRoute("/_authed")({
-    beforeLoad: ({ context }) => {
-        // Check if the user is authenticated
-        if (!context?.authContext) {
-            return redirect({
-                to: "/sign-in",
-                search: {
-                    redirectUrl: "/books",
-                },
-            });
-        }
-    },
-    errorComponent: ({ error }) => {
-        if (error.message === "Not authenticated") {
-            return;
-        }
+export const Route = createFileRoute('/_authed')({
+  beforeLoad: ({ context }) => {
+    // Check if the user is authenticated
+    if (!context?.authContext) {
+      return redirect({
+        to: '/sign-in',
+        search: {
+          redirectUrl: '/books',
+        },
+      });
+    }
+  },
+  errorComponent: ({ error }) => {
+    if (error.message === 'Not authenticated') {
+      return;
+    }
 
-        throw error;
-    },
+    throw error;
+  },
 
-    component: () => {
-        return (
-            <>
-                <NavBar />
-                <Outlet />
-            </>
-        );
-    },
+  component: () => {
+    return (
+      <>
+        <NavBar />
+        <Outlet />
+      </>
+    );
+  },
 });
