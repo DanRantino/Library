@@ -46,8 +46,6 @@ function RouteComponent() {
     return;
   }, []);
 
-  const router = useRouter();
-
   const form = useAppForm({
     validators: {
       onChange: FormSchema,
