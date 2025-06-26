@@ -46,7 +46,7 @@ function Home() {
   return (
     <div>
       <h2>Hello, {data.user.name}</h2>
-      <p>Welcome to the library app!!</p>
+      <p>Welcome to the library app!</p>
       <Button variant="destructive" onClick={handleSignOut}>
         Sign Out
       </Button>
