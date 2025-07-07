@@ -1,5 +1,5 @@
-import { Link, useRouter } from '@tanstack/react-router';
-import React from 'react';
+import * as React from 'react';
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,72 +7,155 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from '~/components/ui/navigation-menu';
-import { cn } from '~/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
+import { Button } from '~/components/ui/button';
 import { authClient } from '~/utils/auth';
-import { Button } from './ui/button';
+import { Link } from '@tanstack/react-router';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { useSession } from '~/hooks/useSession';
 
-const Navbar = () => {
+const components: {
+  [key: string]: { title: string; href: string; description: string }[];
+} = {
+  books: [
+    // 📚 Books
+    {
+      title: 'Book List',
+      href: '/books',
+      description: 'Browse all books available in the library.',
+    },
+    {
+      title: 'Add Book',
+      href: '/books/new',
+      description: 'Register a new book with title, author, and status.',
+    },
+    {
+      title: 'Edit Book',
+      href: '/books/:id/edit',
+      description: 'Update the details of an existing book.',
+    },
+  ],
+  loans: [
+    // 🔄 Loans
+    {
+      title: 'My Loans',
+      href: '/loans',
+      description: 'View the books you have currently borrowed.',
+    },
+    {
+      title: 'Borrow Book',
+      href: '/loans/new',
+      description: 'Record the borrowing of an available book.',
+    },
+    {
+      title: 'Return Book',
+      href: '/loans/return',
+      description: 'Complete a loan and return the book to the library.',
+    },
+  ],
+  users: [
+    // 👤 Account
+    {
+      title: 'Account Settings',
+      href: '/account/settings',
+      description: 'Update your personal information and preferences.',
+    },
+    {
+      title: 'Logout',
+      href: '/sign-out',
+      description: 'Sign out of your session securely.',
+    },
+  ],
+};
 
-  const router = useRouter();
-  const [path, setPath] = React.useState(router.parseLocation().href);
-  const { useSession } = authClient;
-  if (path.includes('/sign-up') || path.includes('/sign-in')) return null;
-
-
+export default function NavBar() {
+  const session = useSession();
+  const { signOut } = authClient;
   return (
-    <div className="w-screen h-12 flex items-center justify-between bg-accent">
-      <div className="flex items-center justify-center">
-        <NavigationMenu side="right">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Books 1</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4 md:w-[250px] md:grid-cols-1 lg:w-[300px] max-w-fit ">
+    <div className="w-screen fixed h-12 top-0 z-50 border-b bg-background p-2">
+      <NavigationMenu viewport={false}>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Home</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                <li className="row-span-3">
+                  <NavigationMenuLink asChild>
+                    <Link
+                      className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                      to={components.books[0].href}
+                    >
+                      <div className="mt-4 mb-2 text-lg font-medium">
+                        {components.books[0].title}
+                      </div>
+                      <p className="text-muted-foreground text-sm leading-tight">
+                        {components.books[0].description}
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+                {components.books.slice(1).map(component => (
                   <ListItem
-                    title="List of Books"
-                    href={'/books'}>
-                    Here we can view each book and access some information about the loan
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
                   </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-                <Link to={'/books'}>
-                  Documentation
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
-      <NavigationMenu viewport side="left">
-        <NavigationMenuList
-        >
-          <NavigationMenuItem data-side="left">
-            <NavigationMenuTrigger
-              data-state={'open'}
-            >
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Loans</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                {components.loans.map(component => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
+                  </ListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
               <Avatar>
-                <AvatarImage src={useSession().data?.user.image || ''} />
+                <AvatarImage src={session.data?.user.image || ''} />
                 <AvatarFallback>US</AvatarFallback>
               </Avatar>
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[200px] gap-3 p-4 md:w-[250px] md:grid-cols-1 lg:w-[300px] max-w-fit">
-                <ListItem title="Account" href="/account">
-                  Account settings
-                </ListItem>
-                <NavigationMenuLink>
-                  <Button variant="destructive" onClick={() => {
-                    authClient.signOut();
-                  }}>
-                    Log out
-                  </Button>
-                </NavigationMenuLink>
+              <ul className="grid w-[300px] gap-4">
+                {components.users.map(component => {
+                  if (component.title === 'Logout') {
+                    return (
+                      <Button
+                        variant="destructive"
+                        key={component.title}
+                        title={component.title}
+                        onClick={() => {
+                          signOut();
+                        }}
+                      >
+                        {component.title}
+                      </Button>
+                    );
+                  }
+                  return (
+                    <ListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
+                      {component.description}
+                    </ListItem>
+                  );
+                })}
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -80,37 +163,24 @@ const Navbar = () => {
       </NavigationMenu>
     </div>
   );
-};
-
-export default Navbar;
-
-interface Props extends React.ComponentPropsWithoutRef<typeof Link> {
-  children: React.ReactNode;
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<typeof Link>,
-  Props
->(({ className, title, children, href, ...props }, ref) => {
+function ListItem({
+  title,
+  children,
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<'li'> & { href: string }) {
   return (
-    <li>
+    <li {...props}>
       <NavigationMenuLink asChild>
-        <Link
-          to={href}
-          ref={ref}
-          className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-            className,
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+        <Link to={href}>
+          <div className="text-sm leading-none font-medium">{title}</div>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
             {children}
           </p>
         </Link>
       </NavigationMenuLink>
     </li>
   );
-});
-ListItem.displayName = 'ListItem';
+}
