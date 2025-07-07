@@ -5,12 +5,12 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
 import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '~/components/ui/card';
 import { useAppForm } from '~/components/ui/form/form';
 import { authClient } from '~/utils/auth';
@@ -33,11 +33,12 @@ const FormSchema = z.object({
 function RouteComponent() {
   const { signIn, forgetPassword, getSession } = authClient;
   const [session, setSession] = useState<unknown | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (session !== undefined && session !== null && session.data !== null) {
       router.invalidate();
-      router.navigate({ to: '/' });
+      router.navigate({ to: '/books' });
       return;
     }
     getSession().then(session => {
@@ -67,7 +68,7 @@ function RouteComponent() {
       }
       toast.success('Successfully signed in');
       await router.invalidate();
-      return router.navigate({ to: '/' });
+      return router.navigate({ to: '/books' });
     },
   });
 

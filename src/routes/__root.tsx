@@ -2,11 +2,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
-    createRootRoute,
-    HeadContent,
-    Outlet,
-    redirect,
-    Scripts,
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  redirect,
+  Scripts,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import * as React from 'react';
