@@ -36,7 +36,7 @@ export const columns = (openModal: OpenModalFn): ColumnDef<Book>[] => [
     enableColumnFilter: false,
   },
   {
-    accessorKey: 'Action',
+    id: 'action',
     header: 'Action',
     enableColumnFilter: false,
     enableSorting: false,
