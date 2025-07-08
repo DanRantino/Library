@@ -29,7 +29,7 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(booksQueryOpts());
 
   return (
-    <div className="w-11/12 h-11/12 px-4 overflow-auto flex flex-col gap-4 align-center">
+    <div className="w-11/12 h-11/12 px-4 overflow-auto flex flex-col gap-4 items-center">
       <BooksTable
         data={data.books}
         openModal={(type: 'Details' | 'Delete', bookId: string, book: Book) => {
