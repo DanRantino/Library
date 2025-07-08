@@ -76,16 +76,18 @@ export function DataTable<TData, TValue>({
   });
 
   // Get unique values for each column for filter dropdowns
-  const getUniqueColumnValues = (columnId: string) => {
-    const uniqueValues = new Set<string>();
-    data.forEach((row: TData) => {
-      const value = (row as Record<string, unknown>)[columnId];
-      if (value !== null && value !== undefined) {
-        uniqueValues.add(String(value));
-      }
-    });
-    return Array.from(uniqueValues).sort();
-  };
+  const getUniqueColumnValues = React.useCallback((columnId: string) => {
+    return React.useMemo(() => {
+      const uniqueValues = new Set<string>();
+      data.forEach((row: TData) => {
+        const value = (row as Record<string, unknown>)[columnId];
+        if (value !== null && value !== undefined) {
+          uniqueValues.add(String(value));
+        }
+      });
+      return Array.from(uniqueValues).sort();
+    }, [data, columnId]);
+  }, [data]);
 
   // Get filter value for a specific column
   const getColumnFilterValue = (columnId: string) => {
