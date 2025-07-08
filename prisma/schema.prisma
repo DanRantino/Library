@@ -9,28 +9,30 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
-  email         String    @unique
+  email         String     @unique
   emailVerified Boolean
   image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  role          Role      @default(USER)
-  Student       Student?
-  Teacher       Teacher?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  role          Role       @default(USER)
+
+  student       Student?
+  teacher       Teacher?
   accounts      Account[]
   sessions      Session[]
+  reviews       Review[]
 
   @@map("user")
 }
 
 model Session {
   id        String   @id
-  expiresAt DateTime
   token     String   @unique
-  createdAt DateTime
-  updatedAt DateTime
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
   userId    String
@@ -40,7 +42,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String   @id
   accountId             String
   providerId            String
   userId                String
@@ -51,9 +53,9 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
@@ -63,55 +65,121 @@ model Verification {
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
 
   @@map("verification")
 }
 
 model Student {
-  id         String  @id @default(uuid())
+  id         String   @id @default(uuid())
   name       String
   class      String
-  enrollment String  @unique
-  userId     String? @unique
-  loans      Loan[]
-  user       User?   @relation(fields: [userId], references: [id])
-}
-
-model Book {
-  id       String @id @default(uuid())
-  title    String
-  author   String
-  genre    String
-  code     String @unique
-  quantity Int
-  loans    Loan[]
-}
-
-model Loan {
-  id         String    @id @default(uuid())
-  studentId  String?
-  teacherId  String?
-  bookId     String
-  loanDate   DateTime  @default(now())
-  dueDate    DateTime
-  returnDate DateTime?
-  status     String
-  book       Book      @relation(fields: [bookId], references: [id])
-  student    Student?  @relation(fields: [studentId], references: [id])
-  teacher    Teacher?  @relation(fields: [teacherId], references: [id])
+  enrollment String   @unique
+  userId     String?  @unique
+  user       User?    @relation(fields: [userId], references: [id])
+  loans      Loan[]   @relation("StudentLoans")
 }
 
 model Teacher {
   id     String  @id @default(uuid())
   name   String
   userId String? @unique
-  loans  Loan[]
   user   User?   @relation(fields: [userId], references: [id])
+  loans  Loan[]  @relation("TeacherLoans")
+}
+
+model Book {
+  id             String         @id @default(uuid())
+  title          String
+  subtitle       String?
+  author         String
+  publisher      String?
+  publicationYear Int?
+  genre          String
+  code           String         @unique
+  isbn           String?        @unique
+  language       String         @default("Português")
+  edition        String?
+  pages          Int?
+  synopsis       String?
+  coverUrl       String?
+  quantity       Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  loans          Loan[]
+  categories     BookCategory[]
+  tags           BookTag[]
+  reviews        Review[]
+}
+
+model Loan {
+  id         String     @id @default(uuid())
+  studentId  String?
+  teacherId  String?
+  bookId     String
+  loanDate   DateTime   @default(now())
+  dueDate    DateTime
+  returnDate DateTime?
+  status     LoanStatus
+
+  book       Book       @relation(fields: [bookId], references: [id])
+  student    Student?   @relation("StudentLoans", fields: [studentId], references: [id])
+  teacher    Teacher?   @relation("TeacherLoans", fields: [teacherId], references: [id])
+}
+
+model Category {
+  id    String         @id @default(uuid())
+  name  String         @unique
+  books BookCategory[]
+}
+
+model BookCategory {
+  bookId     String
+  categoryId String
+
+  book       Book     @relation(fields: [bookId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([bookId, categoryId])
+}
+
+model Tag {
+  id    String      @id @default(uuid())
+  name  String      @unique
+  books BookTag[]
+}
+
+model BookTag {
+  bookId String
+  tagId  String
+
+  book   Book @relation(fields: [bookId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([bookId, tagId])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int      // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
+  userId    String
+  bookId    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+enum LoanStatus {
+  EM_ANDAMENTO
+  DEVOLVIDO
+  ATRASADO
 }

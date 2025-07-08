@@ -5,10 +5,25 @@ import { queryKeys } from '~/server/keys';
 import { client } from '~/routes/__root';
 import { z } from 'zod';
 
-export const getBooksFn = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  const books = await prisma.book.findMany();
+export const getBooksFn = createServerFn({}).handler(async () => {
+  const books = await prisma.book.findMany({
+    include: {
+      loans: {
+        select: {
+          id: true,
+          dueDate: true,
+          returnDate: true,
+          status: true,
+          student: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
   return {
     books,

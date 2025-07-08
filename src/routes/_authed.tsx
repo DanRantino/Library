@@ -14,19 +14,17 @@ export const Route = createFileRoute('/_authed')({
     }
   },
   errorComponent: ({ error }) => {
-    if (error.message === 'Not authenticated') {
-      return;
-    }
-
     throw error;
   },
 
   component: () => {
     return (
-      <>
+      <div className="w-screen h-screen">
         <NavBar />
-        <Outlet />
-      </>
+        <div className="pt-16 h-screen flex items-center justify-center overflow-auto">
+          <Outlet />
+        </div>
+      </div>
     );
   },
 });
