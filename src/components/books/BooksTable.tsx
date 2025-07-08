@@ -40,7 +40,7 @@ export function BooksTable({
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Books</h2>
           <p className="text-muted-foreground">
-            Manage your library's book collection
+            Manage your library&apos;s book collection
           </p>
         </div>
       </div>
