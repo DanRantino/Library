@@ -11,6 +11,7 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CreateAccountsRouteImport } from './routes/create-accounts'
 import { Route as PagesRouteImport } from './routes/_pages'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as PagesIndexRouteImport } from './routes/_pages/index'
@@ -23,6 +24,11 @@ import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth/
 
 const rootServerRouteImport = createServerRootRoute()
 
+const CreateAccountsRoute = CreateAccountsRouteImport.update({
+  id: '/create-accounts',
+  path: '/create-accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PagesRoute = PagesRouteImport.update({
   id: '/_pages',
   getParentRoute: () => rootRouteImport,
@@ -68,6 +74,7 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/create-accounts': typeof CreateAccountsRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PagesIndexRoute
 }
 export interface FileRoutesByTo {
+  '/create-accounts': typeof CreateAccountsRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authed': typeof AuthedRouteWithChildren
   '/_pages': typeof PagesRouteWithChildren
+  '/create-accounts': typeof CreateAccountsRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
@@ -97,6 +106,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/create-accounts'
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
@@ -104,11 +114,19 @@ export interface FileRouteTypes {
     | '/account'
     | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/reset-password' | '/sign-in' | '/sign-up' | '/books' | '/account' | '/'
+  to:
+    | '/create-accounts'
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
+    | '/books'
+    | '/account'
+    | '/'
   id:
     | '__root__'
     | '/_authed'
     | '/_pages'
+    | '/create-accounts'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
@@ -120,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthedRoute: typeof AuthedRouteWithChildren
   PagesRoute: typeof PagesRouteWithChildren
+  CreateAccountsRoute: typeof CreateAccountsRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
@@ -148,6 +167,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/create-accounts': {
+      id: '/create-accounts'
+      path: '/create-accounts'
+      fullPath: '/create-accounts'
+      preLoaderRoute: typeof CreateAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_pages': {
       id: '/_pages'
       path: ''
@@ -244,6 +270,7 @@ const PagesRouteWithChildren = PagesRoute._addFileChildren(PagesRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AuthedRoute: AuthedRouteWithChildren,
   PagesRoute: PagesRouteWithChildren,
+  CreateAccountsRoute: CreateAccountsRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,

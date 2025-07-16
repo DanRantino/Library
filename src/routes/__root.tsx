@@ -95,7 +95,7 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full bg-background">
+    <html lang="en" className="h-screen w-screen overflow-hidden bg-background">
       <head>
         <HeadContent />
       </head>
