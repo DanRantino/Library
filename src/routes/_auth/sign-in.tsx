@@ -62,9 +62,9 @@ function RouteComponent() {
         password: value.password,
       });
       if (error) {
-        return toast.error(
-          error?.message || 'An error occurred while signing in'
-        );
+        toast.error(error?.message || 'An error occurred while signing in');
+        await router.navigate({ to: '/create-accounts' });
+        return;
       }
       toast.success('Successfully signed in');
       await router.invalidate();
@@ -99,8 +99,8 @@ function RouteComponent() {
     <div className="h-screen w-full flex items-center justify-center">
       <Card className="w-full max-w-md rounded-2xl">
         <CardHeader>
-          <CardTitle>Create Account</CardTitle>
-          <CardDescription> Create your account </CardDescription>
+          <CardTitle>Sign In</CardTitle>
+          <CardDescription> Sign in to your account </CardDescription>
         </CardHeader>
         <form
           onSubmit={e => {

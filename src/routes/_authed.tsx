@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_authed')({
     return (
       <div className="w-screen h-screen">
         <NavBar />
-        <div className="pt-16 h-screen flex items-center justify-center overflow-auto">
+        <div className="pt-8 h-screen flex items-center justify-center overflow-auto">
           <Outlet />
         </div>
       </div>

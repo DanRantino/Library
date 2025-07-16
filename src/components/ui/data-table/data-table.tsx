@@ -53,6 +53,9 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState('');
 
+  const [pageSize, setPageSize] = React.useState(5);
+  const [pageIndex, setPageIndex] = React.useState(0);
+
   const table = useReactTable({
     data,
     columns,
@@ -72,12 +75,18 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       globalFilter,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
   });
 
   // Get unique values for each column for filter dropdowns
-  const getUniqueColumnValues = React.useCallback((columnId: string) => {
-    return React.useMemo(() => {
+  const uniqueColumnValues = React.useMemo(() => {
+    const values: Record<string, string[]> = {};
+    columns.forEach(column => {
+      const columnId = column.id as string;
       const uniqueValues = new Set<string>();
       data.forEach((row: TData) => {
         const value = (row as Record<string, unknown>)[columnId];
@@ -85,9 +94,13 @@ export function DataTable<TData, TValue>({
           uniqueValues.add(String(value));
         }
       });
-      return Array.from(uniqueValues).sort();
-    }, [data, columnId]);
-  }, [data]);
+      values[columnId] = Array.from(uniqueValues).sort();
+    });
+    return values;
+  }, [data, columns]);
+
+  const getUniqueColumnValues = (columnId: string) =>
+    uniqueColumnValues[columnId] || [];
 
   // Get filter value for a specific column
   const getColumnFilterValue = (columnId: string) => {
@@ -185,7 +198,7 @@ export function DataTable<TData, TValue>({
 
       {/* Table */}
       <div className="rounded-md border">
-        <Table>
+        <Table className="min-w-full">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
@@ -212,7 +225,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -234,7 +247,13 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination
+        table={table}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        setPageIndex={setPageIndex}
+        setPageSize={setPageSize}
+      />
     </div>
   );
 }
